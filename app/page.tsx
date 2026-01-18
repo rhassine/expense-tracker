@@ -17,6 +17,7 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { KeyboardShortcutsHelp } from '@/components/ui/KeyboardShortcutsHelp';
 import { ScrollIndicator } from '@/components/ui/ScrollIndicator';
 import { SettingsPanel } from '@/components/settings/SettingsPanel';
+import { ChatToggleButton, ChatPanel } from '@/components/chat';
 import { useExpenseStore } from '@/store/expense-store';
 import { useSettingsStore } from '@/store/settings-store';
 import { useCategoryStore } from '@/store/category-store';
@@ -332,6 +333,10 @@ export default function Home() {
 
       {/* Scroll Indicator */}
       <ScrollIndicator />
+
+      {/* Chat */}
+      <ChatToggleButton />
+      <ChatPanel />
     </div>
   );
 }

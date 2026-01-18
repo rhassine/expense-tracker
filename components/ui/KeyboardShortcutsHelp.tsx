@@ -79,7 +79,7 @@ function ShortcutRow({ shortcut }: { shortcut: ShortcutEntry }) {
  */
 export function KeyboardShortcutsHelp() {
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-[4.5rem] right-4 z-50 sm:bottom-[5rem] sm:right-6">
       <Popover placement="top-end" showArrow>
         <PopoverTrigger>
           <Button
