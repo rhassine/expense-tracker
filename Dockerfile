@@ -15,15 +15,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build arguments for environment variables
-ARG ANTHROPIC_API_KEY
-ARG OPENAI_API_KEY
-
-# Set environment variables for build
-ENV ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY
-ENV OPENAI_API_KEY=$OPENAI_API_KEY
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Build without requiring API keys (they're only needed at runtime)
 RUN npm run build
 
 # Production image, copy all the files and run next
@@ -53,4 +47,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+# API keys are passed at runtime via environment variables in Dokploy
 CMD ["node", "server.js"]
