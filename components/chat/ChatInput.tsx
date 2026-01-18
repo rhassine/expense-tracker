@@ -16,20 +16,54 @@ const MAX_LENGTH = 500;
  */
 export function ChatInput({ onSend, isLoading }: ChatInputProps) {
   const [value, setValue] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  // HeroUI Input ne transmet pas directement la ref a l'input natif
+  // On utilise une ref sur le wrapper et querySelector pour acceder a l'input
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Recupere l'element input natif depuis le wrapper
+   */
+  const getNativeInput = useCallback((): HTMLInputElement | null => {
+    return inputWrapperRef.current?.querySelector('input') ?? null;
+  }, []);
+
+  /**
+   * Focus sur le champ de saisie
+   */
+  const focusInput = useCallback(() => {
+    // Utilise requestAnimationFrame pour s'assurer que le DOM est mis a jour
+    requestAnimationFrame(() => {
+      const input = getNativeInput();
+      input?.focus();
+    });
+  }, [getNativeInput]);
 
   // Focus input on mount
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    focusInput();
+  }, [focusInput]);
+
+  // Track previous loading state to detect when loading finishes
+  const wasLoadingRef = useRef(isLoading);
+
+  // Focus input when loading finishes (assistant has responded)
+  useEffect(() => {
+    if (wasLoadingRef.current && !isLoading) {
+      // Loading just finished, focus the input
+      focusInput();
+    }
+    wasLoadingRef.current = isLoading;
+  }, [isLoading, focusInput]);
 
   const handleSend = useCallback(() => {
     const trimmed = value.trim();
     if (trimmed && !isLoading) {
       onSend(trimmed);
       setValue('');
+      // Restaure le focus apres l'envoi du message
+      focusInput();
     }
-  }, [value, isLoading, onSend]);
+  }, [value, isLoading, onSend, focusInput]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -46,9 +80,8 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
 
   return (
     <div className="flex gap-2 items-end">
-      <div className="flex-1 relative">
+      <div className="flex-1 relative" ref={inputWrapperRef}>
         <Input
-          ref={inputRef}
           value={value}
           onValueChange={setValue}
           onKeyDown={handleKeyDown}
