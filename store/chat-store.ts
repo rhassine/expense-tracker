@@ -97,7 +97,7 @@ export const useChatStore = create<ChatStore>()(
       },
 
       clearHistory: () => {
-        set({ messages: [], error: null });
+        set({ messages: [], error: null, isOpen: true });
       },
     }),
     {
